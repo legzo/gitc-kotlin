@@ -52,15 +52,27 @@ fun main(args: Array<String>) {
 
         }
 
-        System.err.println("factories : $factories")
-        System.err.println("troops : $troops")
+        // System.err.println("factories : $factories")
+        // System.err.println("troops : $troops")
 
-        // Write an action using println()
-        // To debug: System.err.println("Debug messages...");
-
-        // Any valid action, such as "WAIT" or "MOVE source destination cyborgs"
-        println("WAIT")
+        val pollenizeOrders = factories.pollenize()
+        if (pollenizeOrders.isEmpty())
+            println("WAIT")
+        else
+            println(pollenizeOrders)
     }
+}
+
+fun List<Factory>.pollenize(): String {
+    return filter { it.owner == ME }
+        .filter { it.cyborgsNumber > 5 }
+        .flatMap { source ->
+                filter { it.owner != ME }
+                .filter { it.production > 0 }
+                .map { destination ->
+                    "MOVE ${source.id} ${destination.id} 1"
+                }
+        }.joinToString(separator = ";")
 }
 
 fun Int.toOwner() = when (this) {
